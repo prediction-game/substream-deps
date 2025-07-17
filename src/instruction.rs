@@ -147,13 +147,16 @@ impl<'a> LogStack<'a> {
         }
 
         loop {
-            let log = logs.next().unwrap();
+            let log = match logs.next() {
+                Some(log) => log,
+                None => return None, // Handle empty iterator
+            };
 
             if log.is_truncated() {
                 self.is_truncated = true;
                 return None;
             } else if log.is_invoke() {
-                panic!("Unexpected invoke log");
+                return None; // Handle invoke log gracefully
             }
 
             let is_success = log.is_success();
