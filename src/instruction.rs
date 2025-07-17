@@ -121,7 +121,10 @@ impl<'a> LogStack<'a> {
             return;
         }
         loop {
-            let log = logs.next().unwrap();
+            let log = match logs.next() {
+                Some(log) => log,
+                None => return, // Handle empty iterator
+            };
 
             if log.is_truncated() {
                 self.is_truncated = true;
